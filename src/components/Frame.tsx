@@ -22,17 +22,73 @@ import { createStore } from "mipd";
 import { Label } from "~/components/ui/label";
 import { PROJECT_TITLE } from "~/lib/constants";
 
-function ExampleCard() {
+import { coffeeQuiz } from "~/lib/quiz";
+
+function QuizCard() {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showResults, setShowResults] = useState(false);
+
+  const handleAnswer = (selectedOption: number) => {
+    if (selectedOption === coffeeQuiz[currentQuestion].correctAnswer) {
+      setScore(score + 1);
+    }
+
+    if (currentQuestion < coffeeQuiz.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      setShowResults(true);
+    }
+  };
+
+  const resetQuiz = () => {
+    setCurrentQuestion(0);
+    setScore(0);
+    setShowResults(false);
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Welcome to the Frame Template</CardTitle>
+        <CardTitle>Coffee Knowledge Quiz</CardTitle>
         <CardDescription>
-          This is an example card that you can customize or remove
+          Test your coffee knowledge with these questions!
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Label>Place content in a Card here.</Label>
+        {!showResults ? (
+          <div className="space-y-4">
+            <div className="text-sm font-medium">
+              Question {currentQuestion + 1} of {coffeeQuiz.length}
+            </div>
+            <div className="font-medium">
+              {coffeeQuiz[currentQuestion].question}
+            </div>
+            <div className="space-y-2">
+              {coffeeQuiz[currentQuestion].options.map((option, index) => (
+                <button
+                  key={index}
+                  className="w-full p-2 text-left border rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+                  onClick={() => handleAnswer(index)}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4 text-center">
+            <div className="text-xl font-bold">
+              Your Score: {score}/{coffeeQuiz.length}
+            </div>
+            <button
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+              onClick={resetQuiz}
+            >
+              Try Again
+            </button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -140,7 +196,7 @@ export default function Frame() {
         <h1 className="text-2xl font-bold text-center mb-4 text-gray-700 dark:text-gray-300">
           {PROJECT_TITLE}
         </h1>
-        <ExampleCard />
+        <QuizCard />
       </div>
     </div>
   );
