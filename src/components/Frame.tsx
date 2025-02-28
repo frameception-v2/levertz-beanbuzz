@@ -28,10 +28,13 @@ function QuizCard() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
+  const [wrongAnswers, setWrongAnswers] = useState<number[]>([]);
 
   const handleAnswer = (selectedOption: number) => {
     if (selectedOption === coffeeQuiz[currentQuestion].correctAnswer) {
       setScore(score + 1);
+    } else {
+      setWrongAnswers(prev => [...prev, currentQuestion + 1]);
     }
 
     if (currentQuestion < coffeeQuiz.length - 1) {
@@ -45,6 +48,7 @@ function QuizCard() {
     setCurrentQuestion(0);
     setScore(0);
     setShowResults(false);
+    setWrongAnswers([]);
   };
 
   return (
@@ -81,6 +85,11 @@ function QuizCard() {
             <div className="text-xl font-bold">
               Your Score: {score}/{coffeeQuiz.length}
             </div>
+            {wrongAnswers.length > 0 && (
+              <div className="text-sm">
+                Missed questions: {wrongAnswers.join(', ')}
+              </div>
+            )}
             <button
               className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
               onClick={resetQuiz}
